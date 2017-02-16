@@ -29,33 +29,38 @@ int main(int argc, char *argv[]){
 }
 
 int eval (Data* data, int* ouverts){
-    int sum = 0;
-    display_affect(ouverts, data->facility_count);
-    //Somme Couts ouverture
-    int i = 1;
-    while(i <= data->facility_count){
-        if(ouverts[i]){
-            //printf("ouverture : %d\n", data->opening_cost[i]);
-            sum += data->opening_cost[i];
-        }
-        i++;
-    }
-    int j = 1;
-    while(j <= data->client_count){
-        i=2;
-        int iMin = 1;
-        while(i <= data->facility_count){
-            if(data->connection[i][j] < data->connection[iMin][j]){
-                iMin = i;
-            }
-            i++;
-        }
-        //printf("iMin : %d\nConnection : %d\n", iMin,data->connection[iMin][j]);
-        sum += data->connection[iMin][j];
-        j++;
-    }
-    // return (sum) ? INT_MAX : sum;
-    return sum;
+
+	int sum = 0;
+	//Somme Couts ouverture
+	int i = 1;
+	while(i <= data->facility_count){
+		if(ouverts[i-1]){
+			//printf("ouverture : %d\n", data->opening_cost[i]);
+			sum += data->opening_cost[i];
+		}
+		i++;
+	}
+	//Somme couts connexion
+	int j = 1;
+	while(j <= data->client_count){
+		i=1;
+		while(!ouverts[i-1]){
+			i++;
+		}
+		int iMin = i;
+		while(i <= data->facility_count){
+			if(ouverts[i-1] && (data->connection[i][j] < data->connection[iMin][j])){
+				iMin = i;
+			}
+			i++;
+		}
+		//printf("iMin : %d\nConnection : %d\n", iMin,data->connection[iMin][j]);
+		if(iMin <= data->facility_count){
+			sum += data->connection[iMin][j];
+		}
+		j++;
+	}
+	return sum;
 }
 
 int* glouton1 (Data* data) {
