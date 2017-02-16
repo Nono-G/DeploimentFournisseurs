@@ -1,3 +1,2 @@
-*.o
 deploiement
-*.gch
+src/*.o

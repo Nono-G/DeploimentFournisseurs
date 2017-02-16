@@ -1,13 +1,21 @@
-all : deploiement
-	
-deploiement : deploiement.o lecteur.o
-	gcc -std=c11 -Wall -o deploiement deploiement.o lecteur.o
+CC=gcc
 
-deploiement.o : lecteur.h
-	gcc -std=c11 -Wall -o deploiement.o -c deploiement.c
+CCFLAGS= -Wall -I./inc -g3 -std=c11
+LDFLAGS=
 
-lecteur.o :
-	gcc -std=c11 -Wall -o lecteur.o -c lecteur.c
+SRC=$(wildcard src/*.c)
+OBJ=$(SRC:.c=.o)
 
-clean :
-	rm *.o
+EXEC=deploiement
+
+all: $(EXEC)
+
+$(EXEC): $(OBJ)
+	$(CC) -o $(EXEC) $^ $(LDFLAGS)
+
+%.o: %.c
+	$(CC) $(CCFLAGS) -o $@ -c $<
+
+clean:
+	rm -fv src/*.o
+	rm -fv $(EXEC)
