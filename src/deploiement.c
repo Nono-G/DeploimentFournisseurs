@@ -36,7 +36,6 @@ int main(int argc, char *argv[]){
 }
 
 int eval (Data* data, int* ouverts){
-
 	int sum = 0;
 	//Somme Couts ouverture
 	int i = 1;
