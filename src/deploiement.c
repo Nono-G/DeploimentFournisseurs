@@ -4,8 +4,13 @@
 #include <limits.h>
 #include "lecteur.h"
 
+typedef struct result {
+    int* open;
+    int value;
+} result;
+
 int eval (Data* data, int* ouverts);
-int* glouton1 (Data* data);
+result* glouton1 (Data* data);
 
 void display_affect(int* o, int size) {
     for (int i = 0; i < size; ++i)
@@ -18,11 +23,13 @@ int main(int argc, char *argv[]){
         printf("argc : %d\n", argc);
     }else{
         Data* data = load_instance(argv[1]);
-        int* affect = glouton1(data);
+        result* r = glouton1(data);
 
-        display_affect(affect, data->facility_count);
+        display_affect(r->open, data->facility_count);
+        printf("VALUE : %d\n", r->value);
 
-        free(affect);
+        free(r->open);
+        free(r);
         free_data(data);
     }
     return 0;
@@ -60,31 +67,30 @@ int eval (Data* data, int* ouverts){
 		}
 		j++;
 	}
-	return sum;
+	return (!sum) ? INT_MAX : sum;
 }
 
-int* glouton1 (Data* data) {
-    int* o = (int*) malloc(data->facility_count * sizeof(int));
+result* glouton1 (Data* data) {
+    result* r = (result*) malloc(sizeof(result));
+    r->open = (int*) malloc(data->facility_count * sizeof(int));
     for (int i = 0; i < data->facility_count; ++i)
-        o[i] = 0;
+        r->open[i] = 0;
+    int old_value;
     while (42) {
-        int old_value = eval(data, o);
-        printf("OLD:%d\n", old_value);
+        old_value = eval(data, r->open);
         int min_value, i_min, value;
-        int i = 1;
-        while(o[i]){i++;}
-        o[i] = 1;
-        min_value = eval(data, o);
+        int i = 0;
+        while(r->open[i]){i++;}
+        r->open[i] = 1;
+        min_value = eval(data, r->open);
         i_min = i;
-        o[i] = 0;
-        while(i<= data->facility_count){
-            if(!o[i]){
-                o[i] = 1;
-                printf("AFFECT 1\n");
-                value = eval(data, o);
-                o[i] = 0;
+        r->open[i] = 0;
+        while(i < data->facility_count){
+            if(!r->open[i]){
+                r->open[i] = 1;
+                value = eval(data, r->open);
+                r->open[i] = 0;
                 if (value < min_value){
-                    printf("MIN !\n");
                     min_value = value;
                     i_min = i;
                 }
@@ -92,11 +98,11 @@ int* glouton1 (Data* data) {
             i++;
         }
         if(min_value < old_value){
-            printf("OLD\n");
-            o[i_min] = 1;
+            r->open[i_min] = 1;
         }else{
             break;
         }
     }
-    return o;
+    r->value = old_value;
+    return r;
 }
