@@ -11,12 +11,12 @@ typedef struct result {
 
 int eval (Data* data, int* ouverts);
 result* glouton1 (Data* data);
+void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
 
 void display_affect(int* o, int size) {
     for (int i = 0; i < size; ++i)
         printf("[%d]%d \n", i, o[i]);
 }
-
 
 int main(int argc, char *argv[]){
     if(argc != 2){
@@ -79,7 +79,7 @@ result* glouton1 (Data* data) {
         old_value = eval(data, r->open);
         int min_value, i_min, value;
         int i = 0;
-        while(r->open[i]){i++;}
+        while(r->open[i]){i++;}//Skip true values
         r->open[i] = 1;
         min_value = eval(data, r->open);
         i_min = i;
@@ -104,4 +104,33 @@ result* glouton1 (Data* data) {
     }
     r->value = old_value;
     return r;
+}
+
+//BETA - EN CHANTIER
+void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts){//i énuméré à partir de 1 !
+    //Partie 1 :: 2*fi - Sig[j c/c S](c(j,O)-c_i,j)+
+    double res = 2*data->opening_cost[fournisseur_i];
+    int j = 1;
+    int somme = 0;
+    while(j <= data->client_count){
+        if(! clients_connectes[j-1]){//N'est pas connecté, j c/c S
+            //c(j,O)
+                int k = 1;
+                while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
+                int k_min = k;
+                while(k <= data->facility_count){
+                    if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
+                        k_min = k;
+                    }
+                    k++;
+                }
+                int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
+                calc = (calc>0)? calc : 0; //calc = max(calc,0)
+                somme += calc;
+            //
+        }
+    }
+    res-=somme;
+    //Fin partie 1
+    //Beta doit déterminer Y ???
 }
