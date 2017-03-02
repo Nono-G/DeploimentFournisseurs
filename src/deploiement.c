@@ -115,22 +115,34 @@ void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisse
     while(j <= data->client_count){
         if(! clients_connectes[j-1]){//N'est pas connecté, j c/c S
             //c(j,O)
-                int k = 1;
-                while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
-                int k_min = k;
-                while(k <= data->facility_count){
-                    if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
-                        k_min = k;
-                    }
-                    k++;
+            int k = 1;
+            while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
+            int k_min = k;
+            while(k <= data->facility_count){
+                if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
+                    k_min = k;
                 }
-                int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
-                calc = (calc>0)? calc : 0; //calc = max(calc,0)
-                somme += calc;
+                k++;
+            }
+            int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
+            calc = (calc>0)? calc : 0; //calc = max(calc,0)
+            somme += calc;
             //
         }
     }
     res-=somme;
     //Fin partie 1
+    //Trier les clients par coûts de connexion
+    int nClientsNC = 0;
+    int* clientsNC = malloc(data->client_count*sizeof(int));
+    j=0;
+    while(j < data->client_count){
+        if(!clients_connectes[i]){
+            clientsNC[nClientsNC] = j;
+            nClientsNC++;
+        }
+        j++;
+    }
+
     //Beta doit déterminer Y ???
 }
