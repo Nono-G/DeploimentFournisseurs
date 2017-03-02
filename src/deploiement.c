@@ -12,13 +12,13 @@ typedef struct result {
 typedef struct beta_return {
     int* y_clients;
     int y_size;
-    int value;
+    double value;
 } beta_return;
 
 int eval (Data* data, int* ouverts);
 result* glouton1 (Data* data);
 beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
-
+void free_beta_return(beta_return* p);
 void display_affect(int* o, int size){
     for (int i = 0; i < size; ++i)
         printf("[%d]%d \n", i, o[i]);
@@ -29,13 +29,24 @@ int main(int argc, char *argv[]){
         printf("argc : %d\n", argc);
     }else{
         Data* data = load_instance(argv[1]);
-        result* r = glouton1(data);
+        //result* r = glouton1(data);
+        int* test_clients_co = malloc(data->client_count*sizeof(int));
+        test_clients_co[1] = 1;
+        int* test_fournisseurs_o = malloc(data->facility_count*sizeof(int));
+        test_fournisseurs_o[0] = 1;
+        beta_return* b = beta (4,data,test_clients_co,test_fournisseurs_o);
+        printf("BETA : %f\n", b->value);
+        printf("BETA : %d\n", b->y_size);
+        display_affect(b->y_clients, b->y_size);
 
-        display_affect(r->open, data->facility_count);
-        printf("VALUE : %d\n", r->value);
+        free_beta_return(b);
+        free(test_fournisseurs_o);
+        free(test_clients_co);
+        //display_affect(r->open, data->facility_count);
+        //printf("VALUE : %d\n", r->value);
 
-        free(r->open);
-        free(r);
+        //free(r->open);
+        //free(r);
         free_data(data);
     }
     return 0;
@@ -172,6 +183,7 @@ beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* f
             somme += calc;
             //
         }
+        j++;
     }
     res-=somme;
     //Fin partie 1
