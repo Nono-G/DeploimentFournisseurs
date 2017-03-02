@@ -9,11 +9,17 @@ typedef struct result {
     int value;
 } result;
 
+typedef struct beta_return {
+    int* y_clients;
+    int y_size;
+    int value;
+} beta_return;
+
 int eval (Data* data, int* ouverts);
 result* glouton1 (Data* data);
-void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
+beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
 
-void display_affect(int* o, int size) {
+void display_affect(int* o, int size){
     for (int i = 0; i < size; ++i)
         printf("[%d]%d \n", i, o[i]);
 }
@@ -139,8 +145,12 @@ void tri_rapide(Data* data, int fournisseur_i, int* array, int arraysize) {
     tri_rapide_back(data, fournisseur_i, debut, arraysize - 1, array);
 }
 
-//BETA - EN CHANTIER
-void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts){//i énuméré à partir de 1 !
+//Penser a free le return
+//Retourne struct :
+//  value : le ration
+//  y_clients : le tableau de clients y
+//  y_size : taille explicite de y_clients
+beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts){//i énuméré à partir de 1 !
     //Partie 1 :: 2*fi - Sig[j c/c S](c(j,O)-c_i,j)+
     double res = 2*data->opening_cost[fournisseur_i];
     int j = 1;
@@ -176,10 +186,31 @@ void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisse
         }
         j++;
     }
-
     tri_rapide(data, fournisseur_i, clientsNC, nClientsNC);
-
+    //clientsNC est trié
     display_affect(clientsNC, nClientsNC);
+    beta_return* ret = malloc(sizeof(beta_return));
+    ret->y_clients = malloc(data->client_count*sizeof(int));
+    ret->y_size = 0;
+    j=0;
+    double newRes;
+    while(j<nClientsNC){
+        newRes = res+data->connection[fournisseur_i][clientsNC[j]]/(ret->y_size+1);
+        if(newRes < res){
+            ret->y_clients[ret->y_size] = clientsNC[j];
+            ret->y_size = (ret->y_size+1);
+            res = newRes;
+        }else{
+            break;
+        }
+        j++;
+    }
+    ret->value = res;
+    free(clientsNC);
+    return ret;
+}
 
-    //Beta doit déterminer Y ???
+void free_beta_return(beta_return* p){
+    free(p->y_clients);
+    free(p);
 }
