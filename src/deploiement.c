@@ -106,6 +106,39 @@ result* glouton1 (Data* data) {
     return r;
 }
 
+void permute(int i, int j, int* array) {
+    int tmp = array[i];
+    array[i] = array[j];
+    array[j] = tmp;
+}
+
+void placer_pivot(Data* data, int fournisseur_i, int g, int d, int* array, int *p) {
+    int i;
+    int pivot = data->connection[fournisseur_i][g];
+    *p = g;
+    for (i = g + 1; i <= d; i++) {
+        if (data->connection[fournisseur_i][i] < pivot) {
+            (*p)++;
+            if (i != *p) permute(i, *p, array);
+        }
+    }
+    permute(*p, g, array);
+}
+
+void tri_rapide_back(Data* data, int fournisseur_i, int g, int d, int* array) {
+    int p;
+    if (g < d) {
+        placer_pivot(data, fournisseur_i, g, d, array, &p);
+        tri_rapide_back(data, fournisseur_i, g, p - 1, array);
+        tri_rapide_back(data, fournisseur_i, p + 1, d, array);
+    }
+}
+
+void tri_rapide(Data* data, int fournisseur_i, int* array, int arraysize) {
+    int debut = 0;
+    tri_rapide_back(data, fournisseur_i, debut, arraysize - 1, array);
+}
+
 //BETA - EN CHANTIER
 void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts){//i énuméré à partir de 1 !
     //Partie 1 :: 2*fi - Sig[j c/c S](c(j,O)-c_i,j)+
@@ -137,12 +170,16 @@ void beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisse
     int* clientsNC = malloc(data->client_count*sizeof(int));
     j=0;
     while(j < data->client_count){
-        if(!clients_connectes[i]){
+        if(!clients_connectes[j]){
             clientsNC[nClientsNC] = j;
             nClientsNC++;
         }
         j++;
     }
+
+    tri_rapide(data, fournisseur_i, clientsNC, nClientsNC);
+
+    display_affect(clientsNC, nClientsNC);
 
     //Beta doit déterminer Y ???
 }
