@@ -1,93 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <glpk.h>
-#include <limits.h>
-#include "lecteur.h"
-
-typedef struct result {
-    int* open;
-    int value;
-} result;
-
-typedef struct beta_return {
-    int* y_clients;
-    int y_size;
-    double value;
-} beta_return;
-
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct {
-    int priority;
-    int type;
-    int indice;
-} node_t;
-
-typedef struct {
-    node_t *nodes;
-    int len;
-    int size;
-} heap_t;
-
-void push (heap_t *h, int priority, int type, int indice) {
-    if (h->len + 1 >= h->size) {
-        h->size = h->size ? h->size * 2 : 4;
-        h->nodes = (node_t *)realloc(h->nodes, h->size * sizeof (node_t));
-    }
-    int i = h->len + 1;
-    int j = i / 2;
-    while (i > 1 && h->nodes[j].priority > priority) {
-        h->nodes[i] = h->nodes[j];
-        i = j;
-        j = j / 2;
-    }
-    h->nodes[i].priority = priority;
-    h->nodes[i].type = type;
-    h->nodes[i].indice = indice;
-    h->len++;
-}
-
-node_t* pop (heap_t *h) {
-    int i, j, k;
-    if (!h->len) return NULL;
-    node_t data = h->nodes[1];  //     ICICICICICICICICICICICICICICICICICICICICIC
-    h->nodes[1] = h->nodes[h->len];
-    h->len--;
-    i = 1;
-    while (1) {
-        k = i;
-        j = 2 * i;
-        if (j <= h->len && h->nodes[j].priority < h->nodes[k].priority)
-            k = j;
-        if (j + 1 <= h->len && h->nodes[j + 1].priority < h->nodes[k].priority)
-            k = j + 1;
-        if (k == i) break;
-        h->nodes[i] = h->nodes[k];
-        i = k;
-    }
-    h->nodes[i] = h->nodes[h->len + 1];
-    return data;
-}
-
-// int main () {
-//     heap_t *h = (heap_t *)calloc(1, sizeof (heap_t));
-//     push(h, 3, "Clear drains");
-//     push(h, 4, "Feed cat");
-//     push(h, 5, "Make tea");
-//     push(h, 1, "Solve RC tasks");
-//     push(h, 2, "Tax return");
-//     int i;
-//     for (i = 0; i < 5; i++) {
-//         printf("%s\n", pop(h));
-//     }
-//     return 0;
-// }
+#include "util.h"
+#include "quicksort.h"
 
 int eval (Data* data, int* ouverts);
 result* glouton1 (Data* data);
 beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
-void free_beta_return(beta_return* p);
+
 void display_affect(int* o, int size){
     for (int i = 0; i < size; ++i)
         printf("[%d]%d \n", i, o[i]);
@@ -122,37 +39,37 @@ int main(int argc, char *argv[]){
 }
 
 int eval (Data* data, int* ouverts){
-	int sum = 0;
-	//Somme Couts ouverture
-	int i = 1;
-	while(i <= data->facility_count){
-		if(ouverts[i-1]){
-			//printf("ouverture : %d\n", data->opening_cost[i]);
-			sum += data->opening_cost[i];
-		}
-		i++;
-	}
-	//Somme couts connexion
-	int j = 1;
-	while(j <= data->client_count){
-		i=1;
-		while(!ouverts[i-1]){
-			i++;
-		}
-		int iMin = i;
-		while(i <= data->facility_count){
-			if(ouverts[i-1] && (data->connection[i][j] < data->connection[iMin][j])){
-				iMin = i;
-			}
-			i++;
-		}
-		//printf("iMin : %d\nConnection : %d\n", iMin,data->connection[iMin][j]);
-		if(iMin <= data->facility_count){
-			sum += data->connection[iMin][j];
-		}
-		j++;
-	}
-	return (!sum) ? INT_MAX : sum;
+    int sum = 0;
+    //Somme Couts ouverture
+    int i = 1;
+    while(i <= data->facility_count){
+        if(ouverts[i-1]){
+            //printf("ouverture : %d\n", data->opening_cost[i]);
+            sum += data->opening_cost[i];
+        }
+        i++;
+    }
+    //Somme couts connexion
+    int j = 1;
+    while(j <= data->client_count){
+        i=1;
+        while(!ouverts[i-1]){
+            i++;
+        }
+        int iMin = i;
+        while(i <= data->facility_count){
+            if(ouverts[i-1] && (data->connection[i][j] < data->connection[iMin][j])){
+                iMin = i;
+            }
+            i++;
+        }
+        //printf("iMin : %d\nConnection : %d\n", iMin,data->connection[iMin][j]);
+        if(iMin <= data->facility_count){
+            sum += data->connection[iMin][j];
+        }
+        j++;
+    }
+    return (!sum) ? INT_MAX : sum;
 }
 
 result* glouton1 (Data* data) {
@@ -190,39 +107,6 @@ result* glouton1 (Data* data) {
     }
     r->value = old_value;
     return r;
-}
-
-void permute(int i, int j, int* array) {
-    int tmp = array[i];
-    array[i] = array[j];
-    array[j] = tmp;
-}
-
-void placer_pivot(Data* data, int fournisseur_i, int g, int d, int* array, int *p) {
-    int i;
-    int pivot = data->connection[fournisseur_i][g];
-    *p = g;
-    for (i = g + 1; i <= d; i++) {
-        if (data->connection[fournisseur_i][i] < pivot) {
-            (*p)++;
-            if (i != *p) permute(i, *p, array);
-        }
-    }
-    permute(*p, g, array);
-}
-
-void tri_rapide_back(Data* data, int fournisseur_i, int g, int d, int* array) {
-    int p;
-    if (g < d) {
-        placer_pivot(data, fournisseur_i, g, d, array, &p);
-        tri_rapide_back(data, fournisseur_i, g, p - 1, array);
-        tri_rapide_back(data, fournisseur_i, p + 1, d, array);
-    }
-}
-
-void tri_rapide(Data* data, int fournisseur_i, int* array, int arraysize) {
-    int debut = 0;
-    tri_rapide_back(data, fournisseur_i, debut, arraysize - 1, array);
 }
 
 //Penser a free le return
@@ -289,9 +173,4 @@ beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* f
     ret->value = res;
     free(clientsNC);
     return ret;
-}
-
-void free_beta_return(beta_return* p){
-    free(p->y_clients);
-    free(p);
 }
