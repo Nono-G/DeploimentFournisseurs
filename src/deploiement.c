@@ -10,7 +10,7 @@ void display_affect(int* o, int size){
         printf("[%d]%d \n", i, o[i]);
 }
 
-int main(int argc, char *argv[]){
+/*int main(int argc, char *argv[]){
     if(argc != 2){
         printf("argc : %d\n", argc);
     }else{
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]){
         free_data(data);
     }
     return 0;
-}
+}*/
 
 int eval (Data* data, int* ouverts){
     int sum = 0;

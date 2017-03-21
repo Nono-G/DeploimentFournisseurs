@@ -13,6 +13,9 @@ all: $(EXEC)
 $(EXEC): $(OBJ)
 	$(CC) -o $(EXEC) $^ $(LDFLAGS)
 
+src/lp.o: src/lp.c
+	$(CC) -lglpk $(CCFLAGS) -c $< -o $@ 
+
 %.o: %.c
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
