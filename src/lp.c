@@ -1,28 +1,12 @@
-//COMPILATION
-/*
-gcc -Wall -std=c11 -Iinc src/lp.c -lglpk -o lp
-*/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <glpk.h>
+#include "util.h"
 
 #define TAILLE_MATRICE_GLPK 1000001
 #define TAILLE_NOM 100
 
-typedef struct {
-    int client_count;
-    int facility_count;
-    int* opening_cost;
-    int** connection;
-} Data;
 
 void solv(Data* data);
 int iVar (int i, int j, Data* data);
 Data* load_instance(char* filename);
-void free_data(Data* data);
-void skipLine(FILE *fp);
-
 
 int main(int argc, char *argv[]){
 	if(argc != 2){
@@ -44,7 +28,7 @@ void solv(Data* data){
 	//II OBJECTIF
 	glp_set_obj_dir(lp,GLP_MIN);//Minimiser
 	//III VARIABLES
-	int nVar = (data->facility_count)+((data->facility_count)*(data->client_count)); 
+	int nVar = (data->facility_count)+((data->facility_count)*(data->client_count));
 	glp_add_cols(lp,nVar);
 	//III.1 Ouvertures
 	int i = 1;
@@ -75,7 +59,7 @@ void solv(Data* data){
 	int* ja = malloc(TAILLE_MATRICE_GLPK*sizeof(int));
 	double* ar = malloc(TAILLE_MATRICE_GLPK*sizeof(int));
 	int iMat = 1;
-	int nConstr = (data->client_count)+((data->facility_count)*(data->client_count)); 
+	int nConstr = (data->client_count)+((data->facility_count)*(data->client_count));
 	glp_add_rows(lp,nConstr);
 	//IV.1 "Je dois me connecter a un fournisseur"
 	int j = 1;
@@ -128,38 +112,4 @@ void solv(Data* data){
 int iVar (int i, int j, Data* data){
 	int nF = data->facility_count;
 	return nF+j+(i-1)*nF;
-}
-
-Data* load_instance(char* filename){
-    FILE *fp;
-   fp=fopen(filename, "r");
-   skipLine(fp);
-   Data* data=malloc(sizeof(data));
-   int nothing;
-   fscanf(fp,"%d %d %d", &data->facility_count, &data->client_count, &nothing);
-   data->opening_cost=malloc((1+data->facility_count)*sizeof(int));
-   data->connection=malloc((1+data->facility_count)*sizeof(int*));
-   for (int fac=1;fac<=data->facility_count;fac++){
-       fscanf(fp,"%d %d",&nothing, &data->opening_cost[fac]);
-       data->connection[fac]=malloc((1+data->client_count)*sizeof(int));
-       for(int client=1;client<=data->client_count; client++) {
-           fscanf(fp,"%d", &data->connection[fac][client]);
-           }
-       }
-    fclose(fp);
-    return data;
-}
-
-void free_data(Data* data){
-    for (int fac=1; fac<=data->facility_count;fac++)
-        free(data->connection[fac]);
-    free(data->connection);
-    free(data->opening_cost);
-    free(data);
-
-    return;
-}
-
-void skipLine(FILE *fp){
-    while (fgetc(fp)!='\n');
 }
