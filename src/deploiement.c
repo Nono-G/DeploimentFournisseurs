@@ -1,10 +1,6 @@
 #include "util.h"
 #include "quicksort.h"
 
-int eval (Data* data, int* ouverts);
-result* glouton1 (Data* data);
-beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
-
 void display_affect(int* o, int size){
     for (int i = 0; i < size; ++i)
         printf("[%d]%d \n", i, o[i]);
@@ -15,33 +11,58 @@ void display_doubles(double* o, int size){
         printf("[%d]%f \n", i, o[i]);
 }
 
-/*int main(int argc, char *argv[]){
-    if(argc != 2){
-        printf("argc : %d\n", argc);
-    }else{
-        Data* data = load_instance(argv[1]);
-        //result* r = glouton1(data);
-        int* test_clients_co = malloc(data->client_count*sizeof(int));
-        test_clients_co[1] = 1;
-        int* test_fournisseurs_o = malloc(data->facility_count*sizeof(int));
-        test_fournisseurs_o[0] = 1;
-        beta_return* b = beta (4,data,test_clients_co,test_fournisseurs_o);
-        printf("BETA : %f\n", b->value);
-        printf("BETA : %d\n", b->y_size);
-        display_affect(b->y_clients, b->y_size);
+int main(int argc, char *argv[]){
+    if(argc != 3){
+        printf("USAGE : %s [g1|g2|lp|aa] nom_du_fichier_probleme\n", argv[0]);
+        printf("\t g1 : Algo Glouton 1\n");
+        printf("\t g2 : Algo Glouton 2\n");
+        printf("\t lp : Programmation Linéaire\n");
+        printf("\t aa : Programmation Linéaire + Arrondi Aléatoire\n");
+        return 1;
+    }
+    Data* data = load_instance(argv[2]);
+    result* r;
+    if(strcmp(argv[1], "g1")==0){
+        r = glouton1(data);
 
-        free_beta_return(b);
-        free(test_fournisseurs_o);
-        free(test_clients_co);
+    }else if(strcmp(argv[1], "g2")==0){
+        printf("Glouton 2 pas prêt !\n");
+        return 2;
+    }else if(strcmp(argv[1], "lp")==0){
+        r = lp(data);
+    }else if(strcmp(argv[1], "aa")==0){
+        printf("Arondi Aléatoire pas prêt !\n");
+        return 2;
+    }
+
+    display_affect(r->open, data->facility_count);
+    printf("VALUE : %d\n", r->value);
+
+    free_result(r);
+    free_data(data);
+    return 0;
+}
+/*
+    int* test_clients_co = malloc(data->client_count*sizeof(int));
+    test_clients_co[1] = 1;
+    int* test_fournisseurs_o = malloc(data->facility_count*sizeof(int));
+    test_fournisseurs_o[0] = 1;
+    beta_return* b = beta (4,data,test_clients_co,test_fournisseurs_o);
+    printf("BETA : %f\n", b->value);
+    printf("BETA : %d\n", b->y_size);
+    display_affect(b->y_clients, b->y_size);
+
+    free_beta_return(b);
+    free(test_fournisseurs_o);
+    free(test_clients_co);
         //display_affect(r->open, data->facility_count);
         //printf("VALUE : %d\n", r->value);
 
         //free(r->open);
         //free(r);
-        free_data(data);
-    }
+    free_data(data);
     return 0;
-}*/
+*/
 
 int eval (Data* data, int* ouverts){
     int sum = 0;
@@ -128,15 +149,15 @@ beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* f
         if(! clients_connectes[j-1]){//N'est pas connecté, j c/c S
             //c(j,O)
             int k = 1;
-            while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
-            int k_min = k;
-            while(k <= data->facility_count){
-                if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
-                    k_min = k;
-                }
-                k++;
+        while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
+        int k_min = k;
+        while(k <= data->facility_count){
+            if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
+                k_min = k;
             }
-            int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
+            k++;
+        }
+        int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
             calc = (calc>0)? calc : 0; //calc = max(calc,0)
             somme += calc;
             //

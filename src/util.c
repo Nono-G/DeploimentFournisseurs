@@ -65,3 +65,8 @@ void free_beta_return(beta_return* p){
     free(p->y_clients);
     free(p);
 }
+
+void free_result(result* r){
+    free(r->open);
+    free(r);
+}

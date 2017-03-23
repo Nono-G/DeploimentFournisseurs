@@ -3,7 +3,7 @@
 int iVar (int i, int j, Data* data);
 Data* load_instance(char* filename);
 
-int main(int argc, char *argv[]){
+/*int main(int argc, char *argv[]){
 	if(argc != 2){
 		printf("USAGE: %s nom_fichier_probleme\n", argv[0]);
 		return -1;
@@ -14,6 +14,37 @@ int main(int argc, char *argv[]){
 	free_data(data);
 	free(open);
 	return 0;
+}*/
+
+result* lp(Data* data){
+	double* res = lpsolv(data, LP_INTEGERS);
+	result* r = (result*) malloc(sizeof(result));
+    r->open = (int*) malloc(data->facility_count * sizeof(int));
+    int i = 0;
+    while(i < data->facility_count){
+    	r->open[i] = (int)res[i];
+    	i++;
+    }
+    r->value = eval(data, r->open);
+    free(res);
+    return r;
+}
+
+result* aa(Data* data){
+	/*result* r = (result*) malloc(sizeof(result));
+    r->open = (int*) malloc(data->facility_count * sizeof(int));
+    double* res = lpsolv(data, LP_RELAX);
+    int* best_open = (int*)malloc(data->facility_count * sizeof(int));
+    int k = 0;
+    int val;
+    while(k<AA_TENTATIVES){
+
+    	val = value(data, );
+    	k++;
+    }
+    free(res);
+    return r;*/
+    return NULL;
 }
 
 double* lpsolv(Data* data, int relax){
@@ -126,14 +157,14 @@ double* lpsolv(Data* data, int relax){
 	//VI RESULTATS
 	double* ret = (double*)(malloc(data->facility_count*sizeof(double)));
 	if(relax){
-		/*TRACE*/printf("Optimal : %f\n", glp_get_obj_val(lp));
+		//*TRACE*/printf("Optimal : %f\n", glp_get_obj_val(lp));
 		i=0;
 		while(i<data->facility_count){
 			ret[i] = glp_get_col_prim(lp, i+1);
 			i++;
 		}
 	}else{
-		/*TRACE*/printf("Optimal : %f\n", glp_mip_obj_val(lp));
+		//*TRACE*/printf("Optimal : %f\n", glp_mip_obj_val(lp));
 		i=0;
 		while(i<data->facility_count){
 			ret[i] = glp_mip_col_val(lp, i+1);
