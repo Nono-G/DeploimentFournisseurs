@@ -12,6 +12,9 @@ void display_doubles(double* o, int size){
 }
 
 int main(int argc, char *argv[]){
+    /*
+    SEGFAULT si le fichier n'est pas ouvrable(n'existe pas), faut-il le tester ?
+    */
     if(argc != 3){
         printf("USAGE : %s [g1|g2|lp|aa] nom_du_fichier_probleme\n", argv[0]);
         printf("\t g1 : Algo Glouton 1\n");
@@ -31,8 +34,7 @@ int main(int argc, char *argv[]){
     }else if(strcmp(argv[1], "lp")==0){
         r = lp(data);
     }else if(strcmp(argv[1], "aa")==0){
-        printf("Arondi Aléatoire pas prêt !\n");
-        return 2;
+        r = aa(data);
     }
 
     display_affect(r->open, data->facility_count);
