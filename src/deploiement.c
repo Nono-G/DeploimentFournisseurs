@@ -10,6 +10,11 @@ void display_affect(int* o, int size){
         printf("[%d]%d \n", i, o[i]);
 }
 
+void display_doubles(double* o, int size){
+    for (int i = 0; i < size; ++i)
+        printf("[%d]%f \n", i, o[i]);
+}
+
 /*int main(int argc, char *argv[]){
     if(argc != 2){
         printf("argc : %d\n", argc);

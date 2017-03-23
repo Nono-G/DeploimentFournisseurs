@@ -29,5 +29,13 @@ typedef struct {
 Data* load_instance(char* filename);
 void free_data(Data* data);
 void free_beta_return(beta_return* p);
+void display_doubles(double* o, int size);
+
+//LINEAR PROGRAMMING
+#define TAILLE_MATRICE_GLPK 1000001
+#define TAILLE_NOM 100
+#define LP_RELAX 1
+#define LP_INTEGERS 0
+double* lpsolv(Data* data, int relax);
 
 #endif
