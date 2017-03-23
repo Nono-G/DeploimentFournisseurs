@@ -15,15 +15,17 @@ int main(int argc, char *argv[]){
     /*
     SEGFAULT si le fichier n'est pas ouvrable(n'existe pas), faut-il le tester ?
     */
-    if(argc != 3){
-        printf("USAGE : %s [g1|g2|lp|aa] nom_du_fichier_probleme\n", argv[0]);
+    if(argc != 4){
+        printf("USAGE : %s (g1|g2|lp|aa) (aff|val) nom_du_fichier_probleme\n", argv[0]);
         printf("\t g1 : Algo Glouton 1\n");
         printf("\t g2 : Algo Glouton 2\n");
         printf("\t lp : Programmation Linéaire\n");
         printf("\t aa : Programmation Linéaire + Arrondi Aléatoire\n");
+        printf("\t aff : Afficher les fournisseurs ouverts\n");
+        printf("\t val : Seulement la valeur\n");
         return 1;
     }
-    Data* data = load_instance(argv[2]);
+    Data* data = load_instance(argv[3]);
     result* r;
     if(strcmp(argv[1], "g1")==0){
         r = glouton1(data);
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]){
         r = aa(data);
     }
 
-    display_affect(r->open, data->facility_count);
+    if(strcmp(argv[2], "aff")==0){display_affect(r->open, data->facility_count);}
     printf("VALUE : %d\n", r->value);
 
     free_result(r);
