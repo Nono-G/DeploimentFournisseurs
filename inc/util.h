@@ -45,7 +45,7 @@ beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* f
 #define TAILLE_NOM 100
 #define LP_RELAX 1
 #define LP_INTEGERS 0
-#define AA_TENTATIVES 100000
+#define AA_TENTATIVES 1000
 double* lpsolv(Data* data, int relax);
 result* lp(Data* data);
 result* aa(Data* data);
