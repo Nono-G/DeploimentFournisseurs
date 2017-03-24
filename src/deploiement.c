@@ -166,7 +166,7 @@ result* glouton2(Data* data) {
     }
     // tant que le tas n'est pas vide
     node_t* current;
-    while ((current = pop(tas)) != NULL) {
+    while ((current = pop(tas)) != NULL) { /// BBBBBBBBBBBBBBBBBBBBBBBBBBBOOOOOOOOOOOOOOUUUUUUUUUUUUCCCCCCCCCCCCCCLLLLLLLLLLLLLLEEEEEEEEEEEEEEEEEEEEEEEEEE INFINI
         if (current->type == TYPE_FOURNISEUR) { // si c'est un fournisseur
             // beta_return* b = beta(current->indice, data, connected_client, r->open);
             beta_return* b = beta2(data, current->indice, r->open, connected_client);
@@ -182,7 +182,7 @@ result* glouton2(Data* data) {
                 // ajoute dans le tas les (Cij)j€S
                 for (int i = 0; i < data->client_count; ++i) {
                     if (! connected_client[i]) {
-                        push(tas, data->connection[current->indice][i], TYPE_CLIENT, i);
+                        push(tas, data->connection[current->indice][i], TYPE_CLIENT, i); // PROBLEME ICI CAR PRIORITÉ PLUS FAIBLE ! ! !! !
                     }
                 }
             } else {
@@ -276,6 +276,7 @@ int min_connexion_cost(Data* data, int client, int* openned_supplier) {
 }
 
 beta_return* beta2(Data* data, int supplier, int* openned_supplier, int* connected_client) {
+    printf("BETA\n");
     beta_return* r = (beta_return*) malloc (sizeof(beta_return));
     r->y_clients = (int*) malloc (data->client_count * sizeof(int));
     r->y_size = 0;
