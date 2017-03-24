@@ -21,7 +21,7 @@ void push (heap_t *h, int priority, int type, int indice) {
 node_t* pop (heap_t *h) {
     int i, j, k;
     if (!h->len) return NULL;
-    node_t* data = &(h->nodes[1]);  //     ICICICICICICICICICICICICICICICICICICICICIC
+    node_t* data = &(h->nodes[1]);
     h->nodes[1] = h->nodes[h->len];
     h->len--;
     i = 1;
@@ -38,6 +38,11 @@ node_t* pop (heap_t *h) {
     }
     h->nodes[i] = h->nodes[h->len + 1];
     return data;
+}
+
+heap_t* create_heap() {
+    heap_t* r = (heap_t *)calloc(1, sizeof (heap_t));
+    return r;
 }
 
 // int main () {

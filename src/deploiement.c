@@ -1,5 +1,9 @@
 #include "util.h"
 #include "quicksort.h"
+#include "priority.h"
+
+#define TYPE_FOURNISEUR 1
+#define TYPE_CLIENT 2
 
 void display_affect(int* o, int size){
     for (int i = 0; i < size; ++i)
@@ -31,8 +35,9 @@ int main(int argc, char *argv[]){
         r = glouton1(data);
 
     }else if(strcmp(argv[1], "g2")==0){
-        printf("Glouton 2 pas prêt !\n");
-        return 2;
+        // printf("Glouton 2 pas prêt !\n");
+        r = glouton2(data);
+        // return 2;
     }else if(strcmp(argv[1], "lp")==0){
         r = lp(data);
     }else if(strcmp(argv[1], "aa")==0){
@@ -139,6 +144,56 @@ result* glouton1 (Data* data) {
     return r;
 }
 
+result* glouton2(Data* data) {
+    result* r = (result*) malloc (sizeof(result));
+    r->open = (int*) malloc(data->facility_count * sizeof(int));
+    for (int i = 0; i < data->facility_count; ++i)
+        r->open[i] = 0;
+    int* clients_connected = (int*) malloc(data->client_count * sizeof(int));
+    for (int i = 0; i < data->client_count; ++i)
+        clients_connected[i] = 0;
+    heap_t* tas = create_heap(); // type : 1 = fournisseur, 2 = client
+
+    // Pour chaque i € F
+    for (int i = 0; i < data->facility_count; ++i) {
+        beta_return* b = beta(i, data, clients_connected, r->open);
+        push(tas, b->value, TYPE_FOURNISEUR, i);
+        free_beta_return(b);
+    }
+    // tant que le tas n'est pas vide
+    node_t* current;
+    while ((current = pop(tas)) != NULL) {
+        if (current->type == TYPE_FOURNISEUR) { // si c'est un fournisseur
+            beta_return* b = beta(current->indice, data, clients_connected, r->open);
+            if (b->value == current->priority) { // current beta = beta
+                r->open[current->indice] = 1; // O u i
+                // on retire de S les clients_connected connectés par i pour ce ratio
+                for (int i = 0; i < data->client_count; ++i) {
+                    if (! clients_connected[i] &&
+                            data->connection[current->indice][i] < b->value) {
+                        clients_connected[i] = 1;
+                    }
+                }
+                // ajoute dans le tas les (Cij)j€S
+                for (int i = 0; i < data->client_count; ++i) {
+                    if (! clients_connected[i]) {
+                        push(tas, data->connection[current->indice][i], TYPE_CLIENT, i);
+                    }
+                }
+            } else {
+                // remet dans le tas la valeur actualisée
+                push(tas, b->value, TYPE_FOURNISEUR, current->indice);
+            }
+            free_beta_return(b);
+        } else { // c'est un client
+            if (! clients_connected[current->indice])
+                clients_connected[current->indice] = 1;
+        }
+    }
+    r->value = eval(data, r->open);
+    return r;
+}
+
 //Penser a free le return
 //Retourne struct :
 //  value : le ration
@@ -153,21 +208,21 @@ beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* f
         if(! clients_connectes[j-1]){//N'est pas connecté, j c/c S
             //c(j,O)
             int k = 1;
-        while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
-        int k_min = k;
-        while(k <= data->facility_count){
-            if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
-                k_min = k;
+            while(k <= data->facility_count && (!fournisseur_ouverts[k-1])){k++;}
+            int k_min = k;
+            while(k <= data->facility_count){
+                if(fournisseur_ouverts[k-1] && data->connection[k_min][j]>data->connection[k][j]){
+                    k_min = k;
+                }
+                k++;
             }
-            k++;
-        }
-        int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
+            int calc = data->connection[k_min][j] - data->connection[fournisseur_i][j];
             calc = (calc>0)? calc : 0; //calc = max(calc,0)
             somme += calc;
-            //
         }
         j++;
     }
+    printf("B1\n");
     res-=somme;
     //Fin partie 1
     //Trier les clients par coûts de connexion
@@ -203,4 +258,15 @@ beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* f
     ret->value = res;
     free(clientsNC);
     return ret;
+}
+
+beta_return* beta2(Data* data, int supplier, int* openned_supplier, int* connected_client) {
+    beta_return* r = (beta_return*) malloc (sizeof(beta_return));
+    double value = 2 * data->opening_cost[supplier]; // 2 * Fi
+    int sum = 0;
+    for (int j = 0; j < data->client_count; ++j) {
+        if (! connected_client[j]) { // client non connecté
+
+        }
+    }
 }

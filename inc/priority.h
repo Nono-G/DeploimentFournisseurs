@@ -17,5 +17,6 @@ typedef struct {
 
 void push (heap_t *h, int priority, int type, int indice);
 node_t* pop (heap_t *h);
+heap_t* create_heap();
 
 #endif

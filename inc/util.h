@@ -38,6 +38,7 @@ void free_beta_return(beta_return* p);
 void free_result(result* r);
 int eval (Data* data, int* ouverts);
 result* glouton1 (Data* data);
+result* glouton2(Data* data);
 beta_return* beta (int fournisseur_i, Data* data, int* clients_connectes, int* fournisseur_ouverts);
 
 //LINEAR PROGRAMMING
