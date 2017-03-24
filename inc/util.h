@@ -19,6 +19,7 @@ typedef struct {
 } Data;
 
 Data* load_instance(char* filename);
+Data* load_instance2(char* filename);
 void free_data(Data* data);
 
 //

@@ -1,16 +1,16 @@
 #include "priority.h"
 
-void push (heap_t *h, int priority, int type, int indice) {
+void push (heap_t* h, int priority, int type, int indice) {
     if (h->len + 1 >= h->size) {
         h->size = h->size ? h->size * 2 : 4;
-        h->nodes = (node_t *)realloc(h->nodes, h->size * sizeof (node_t));
+        h->nodes = (node_t*) realloc(h->nodes, h->size * sizeof(node_t));
     }
     int i = h->len + 1;
     int j = i / 2;
     while (i > 1 && h->nodes[j].priority > priority) {
         h->nodes[i] = h->nodes[j];
         i = j;
-        j = j / 2;
+        j /= 2;
     }
     h->nodes[i].priority = priority;
     h->nodes[i].type = type;
@@ -41,8 +41,16 @@ node_t* pop (heap_t *h) {
 }
 
 heap_t* create_heap() {
-    heap_t* r = (heap_t *)calloc(1, sizeof (heap_t));
+    heap_t* r = (heap_t*) malloc(sizeof(heap_t));
+    r->nodes = (node_t*) malloc(sizeof(node_t));
+    r->len = 0;
+    r->size = 0;
     return r;
+}
+
+void free_heap(heap_t* h) {
+    free(h->nodes);
+    free(h);
 }
 
 // int main () {

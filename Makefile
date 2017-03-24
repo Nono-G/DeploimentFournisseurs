@@ -16,6 +16,10 @@ $(EXEC): $(OBJ)
 %.o: %.c
 	$(CC) $(CCFLAGS) -o $@ -c $<
 
+rebuild:
+	make clean
+	make
+
 clean:
 	rm -fv src/*.o
 	rm -fv $(EXEC)
