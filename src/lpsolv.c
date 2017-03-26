@@ -4,7 +4,7 @@
 int iVar (int i, int j, Data* data){
     int nF = data->facility_count;
     int nC = data->client_count;
-    return (nF+j+(i-1)*nC);
+    return (nF+j+i*nC);
 }
 
 double* lpsolv(Data* data, int relax){
@@ -25,7 +25,7 @@ double* lpsolv(Data* data, int relax){
     glp_add_cols(lp,nVar);
     //III.1 Ouvertures
     int i = 1;
-    while(i<=data->facility_count){//LES FOURNISSEURS i
+    while(i < data->facility_count){//LES FOURNISSEURS i
         sprintf(nom, "x%d", i);
         //*TRACE*/printf("Var %d : %s (%d)\n", i, nom, data->opening_cost[i]);
         glp_set_col_name(lp,i,nom);
@@ -33,20 +33,20 @@ double* lpsolv(Data* data, int relax){
             glp_set_col_kind(lp,i,GLP_IV);//Var Entière
         }
         glp_set_col_bnds(lp,i,GLP_DB, 0.0, 1.0);//xi € {0,1}
-        glp_set_obj_coef(lp,i, (double)data->opening_cost[i]);
+        glp_set_obj_coef(lp,i, (double)data->opening_cost[i - 1]);
         i++;
     }
     //III.2 Connexions
     i=1;
-    while(i<=data->facility_count){//LES FOURNISSEURS i
+    while(i<data->facility_count){//LES FOURNISSEURS i
         int j= 1;
-        while(j<=data->client_count){//LES CLIENTS j
+        while(j<data->client_count){//LES CLIENTS j
             int var = iVar(i,j,data);
             sprintf(nom, "y%d-%d", i,j);
             //*TRACE*/printf("Var %d : %s (%d)\n", var, nom, data->connection[i][j]);
             glp_set_col_name(lp, var, nom);
             glp_set_col_bnds(lp, var, GLP_LO, 0.0, 0.0);
-            glp_set_obj_coef(lp, var, (double)data->connection[i][j]);
+            glp_set_obj_coef(lp, var, (double)data->connection[i - 1][j - 1]);
             j++;
         }
         i++;
@@ -60,13 +60,13 @@ double* lpsolv(Data* data, int relax){
     glp_add_rows(lp,nConstr);
     //IV.1 "Je dois me connecter a un fournisseur"
     int j = 1;
-    while(j <= data->client_count){
+    while(j < data->client_count){
         sprintf(nom, "Client %d Connecte", j);
         //*TRACE*/printf("Ctr %d : %s\n", j, nom);
         glp_set_row_name(lp, j, nom);
         glp_set_row_bnds(lp, j, GLP_FX, 1.0, 1.0);//Total des ouvertures pour le client = 1
         int i = 1;
-        while(i <= data->facility_count){
+        while(i < data->facility_count){
             ia[iMat]=j;
             ja[iMat]=iVar(i,j,data);
             ar[iMat]=1.0;
@@ -78,9 +78,9 @@ double* lpsolv(Data* data, int relax){
     }
     //IV.2 "Le fournisseur auquel je me connecte doit être ouvert"
     j = 1;
-    while(j <= data->client_count){
+    while(j < data->client_count){
         int i = 1;
-        while(i <= data->facility_count){
+        while(i < data->facility_count){
             sprintf(nom, "Connexion y%d-%d fournisseur ouvert", i,j);
             //*TRACE*/printf("Ctr %d : %s\n",data->client_count+i+(j-1)*data->facility_count, nom);
             glp_set_row_name(lp, data->client_count+i+(j-1)*data->facility_count, nom);
