@@ -41,10 +41,8 @@ node_t* pop (heap_t *h) {
 }
 
 heap_t* create_heap() {
-    heap_t* r = (heap_t*) malloc(sizeof(heap_t));
+    heap_t* r = (heap_t*) calloc(1, sizeof(heap_t));
     r->nodes = (node_t*) malloc(sizeof(node_t));
-    r->len = 0;
-    r->size = 0;
     return r;
 }
 

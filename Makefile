@@ -1,17 +1,19 @@
-CC=gcc
+CC = gcc
 
-CCFLAGS= -Wall -I./inc -g3 -std=c11
-LDFLAGS= -lglpk
+CCFLAGS = -Wall -I./inc -g3 -std=c11
+LDFLAGS = -lglpk
 
-SRC=$(wildcard src/*.c)
-OBJ=$(SRC:.c=.o)
+SRC = $(wildcard src/*.c)
+OBJ = $(SRC:.c=.o)
 
-EXEC=deploiement
+EXEC = deploiement
+
+.PHONY: all rebuild clean
 
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CC) -o $(EXEC) $^ $(LDFLAGS)
+	$(CC) $(LDFLAGS) -o $(EXEC) $^
 
 %.o: %.c
 	$(CC) $(CCFLAGS) -o $@ -c $<
