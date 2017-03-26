@@ -1,6 +1,4 @@
 #include "glouton2.h"
-#include "quicksort.h"
-#include "priority.h"
 
 //Penser a free le return
 //Retourne struct :
@@ -77,7 +75,7 @@ int min_connexion_cost(Data* data, int client, int* openned_supplier) {
 }
 
 beta_return* beta2(Data* data, int supplier, int* openned_supplier, int* connected_client) {
-    printf("BETA\n");
+    printf("BETA");
     beta_return* r = (beta_return*) malloc (sizeof(beta_return));
     r->y_clients = (int*) malloc (data->client_count * sizeof(int));
     r->y_size = 0;
