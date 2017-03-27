@@ -7,7 +7,6 @@
 #define TAILLE_NOM 100
 #define LP_INTEGERS 0
 #define LP_RELAX 1
-#define AA_TENTATIVES 1000
 
 double* lpsolv (Data* data, int relax);
 

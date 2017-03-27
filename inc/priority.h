@@ -4,20 +4,22 @@
 #include "util.h"
 
 typedef struct {
-    int priority;
+    double priority;
     int type;
     int indice;
 } node_t;
 
 typedef struct {
-    node_t *nodes;
+    node_t** nodes;
     int len;
     int size;
 } heap_t;
 
-void push (heap_t *h, int priority, int type, int indice);
+void push (heap_t *h, double priority, int type, int indice);
 node_t* pop (heap_t *h);
+int is_empty(heap_t* h);
 heap_t* create_heap();
+void display_heap(heap_t* h);
 void free_heap(heap_t* h);
 
 #endif
