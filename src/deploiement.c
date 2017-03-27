@@ -62,9 +62,20 @@ int main(int argc, char *argv[]) {
     else if (aflag) r = aa(data);
     else r = glouton2(data);
 
-    if (dflag) display_int(r->open, data->facility_count);
+    if (dflag) {
+        printf("Les fourniseurs suivants sont ouverts :");
+        int cpt = 0;
+        for (int i = 0; i < data->facility_count; ++i) {
+            if (r->open[i]) {
+                if (cpt % 5 == 0) printf("\n");
+                printf("\t%d", i);
+                cpt++;
+            }
+        }
+        printf("\nSoit %d fournissseur(s) ouvert(s).\n", cpt);
+    }
 
-    printf("VALUE : %d\n", r->value);
+    printf("COUT : %d\n", r->value);
 
     free_result(r);
     free_data(data);

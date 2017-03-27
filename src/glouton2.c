@@ -76,7 +76,7 @@ result* glouton2 (Data* data) {
     int connected_client_count = 0;
     for (int i = 0; i < data->client_count; ++i)
         connected_client[i] = 0;
-    heap_t* tas = create_heap(); // type : 1 = fournisseur, 2 = client
+    heap_t* tas = create_heap(1000000); // type : 1 = fournisseur, 2 = client
     // Pour chaque i € F
     for (int i = 0; i < data->facility_count; ++i) {
         beta_return* b = beta(data, i, r->open, connected_client);
