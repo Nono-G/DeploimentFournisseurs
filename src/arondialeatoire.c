@@ -3,6 +3,7 @@
 #include <string.h>
 
 result* aa (Data* data){
+    printf("ARONDI ALEATOIRE :\n");
     result* r = (result*) malloc(sizeof(result));
     r->open = (int*) malloc(data->facility_count * sizeof(int));
     int* current_open = (int*) malloc(data->facility_count * sizeof(int));

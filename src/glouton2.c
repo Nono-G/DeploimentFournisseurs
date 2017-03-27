@@ -68,6 +68,7 @@ beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int*
 }
 
 result* glouton2 (Data* data) {
+    printf("GLOUTON 2 :\n");
     result* r = (result*) malloc (sizeof(result));
     r->open = (int*) malloc (data->facility_count * sizeof(int));
     for (int i = 0; i < data->facility_count; ++i)
@@ -110,9 +111,10 @@ result* glouton2 (Data* data) {
             }
             free_beta_return(b);
         } else { // c'est un client
-            if (! connected_client[current->indice])
+            if (! connected_client[current->indice]) {
                 connected_client[current->indice] = 1;
                 connected_client_count++;
+            }
         }
         free(current);
     }

@@ -1,6 +1,7 @@
 #include "lp.h"
 
 result* lp(Data* data){
+    printf("PROGRAMMATION LINEAIRE :\n");
     double* res = lpsolv(data, LP_INTEGERS);
     result* r = (result*) malloc(sizeof(result));
     r->open = (int*) malloc(data->facility_count * sizeof(int));

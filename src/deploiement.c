@@ -5,11 +5,12 @@
 #include "arondialeatoire.h"
 
 #include <getopt.h>
+#include <time.h>
 
 void usage(const char* exec) {
-    printf("usage: %s [12ladh] nom_du_fichier_probleme\n", exec);
-    printf("\t-1: Algo Glouton 1\n");
-    printf("\t-2: Algo Glouton 2 (Default)\n");
+    printf("usage: %s [12ladh] fichier\n", exec);
+    printf("\t-1: Glouton 1\n");
+    printf("\t-2: Glouton 2 (Default)\n");
     printf("\t-l: Programmation Linéaire\n");
     printf("\t-a: Programmation Linéaire + Arrondi Aléatoire\n");
     printf("\t-d: Afficher les fournisseurs ouverts\n");
@@ -29,14 +30,24 @@ void display_affect(int* affect, int size) {
     printf("\nSoit %d fournissseur(s) ouvert(s).\n", cpt);
 }
 
+void deploy(Data * data, result* (*funct)(Data*)) {
+    printf("\n"); // cosmétique
+    clock_t start = clock();
+    result* r = funct(data);
+    clock_t end = clock();
+    display_affect(r->open, data->facility_count);
+    printf("Pour un coût de %d\n", r->value);
+    printf("Calculer en %f secondes.\n", (double)(end - start) / CLOCKS_PER_SEC);
+    free_result(r);
+}
+
 int main(int argc, char *argv[]) {
     if (argc - 1 < 1) usage(argv[0]);
 
     int flag1 = 0;
-    // int flag2 = 0;
+    int flag2 = 0;
     int lflag = 0;
     int aflag = 0;
-    int dflag = 0;
     int c;
     opterr = 0;
 
@@ -46,16 +57,13 @@ int main(int argc, char *argv[]) {
                 flag1 = 1;
                 break;
             case '2':
-                // flag2 = 1;
+                flag2 = 1;
                 break;
             case 'l':
                 lflag = 1;
                 break;
             case 'a':
                 aflag = 1;
-                break;
-            case 'd':
-                dflag = 1;
                 break;
             case 'h':
                 usage(argv[0]);
@@ -68,18 +76,12 @@ int main(int argc, char *argv[]) {
     }
 
     Data* data = load_instance2(argv[optind]);
-    result* r;
+    if (flag1) deploy(data, glouton1);
+    if (flag2) deploy(data, glouton2);
+    if (lflag) deploy(data, lp);
+    if (aflag) deploy(data, aa);
+    if (optind == 1) deploy(data, glouton2);
 
-    if (flag1) r = glouton1(data);
-    else if (lflag) r = lp(data);
-    else if (aflag) r = aa(data);
-    else r = glouton2(data);
-
-    if (dflag) display_affect(r->open, data->facility_count);
-
-    printf("COUT : %d\n", r->value);
-
-    free_result(r);
     free_data(data);
     return 0;
 }

@@ -1,6 +1,7 @@
 #include "glouton1.h"
 
 result* glouton1 (Data* data) {
+    printf("GLOUTON 1 :\n");
     result* r = (result*) malloc(sizeof(result));
     r->open = (int*) malloc(data->facility_count * sizeof(int));
     for (int i = 0; i < data->facility_count; ++i)
