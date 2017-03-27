@@ -16,6 +16,19 @@ void usage(const char* exec) {
     exit(0);
 }
 
+void display_affect(int* affect, int size) {
+    printf("Les fourniseurs suivants sont ouverts :");
+    int cpt = 0;
+    for (int i = 0; i < size; ++i) {
+        if (affect[i]) {
+            if (cpt % 5 == 0) printf("\n");
+            printf("\t%d", i);
+            cpt++;
+        }
+    }
+    printf("\nSoit %d fournissseur(s) ouvert(s).\n", cpt);
+}
+
 int main(int argc, char *argv[]) {
     if (argc - 1 < 1) usage(argv[0]);
 
@@ -62,18 +75,7 @@ int main(int argc, char *argv[]) {
     else if (aflag) r = aa(data);
     else r = glouton2(data);
 
-    if (dflag) {
-        printf("Les fourniseurs suivants sont ouverts :");
-        int cpt = 0;
-        for (int i = 0; i < data->facility_count; ++i) {
-            if (r->open[i]) {
-                if (cpt % 5 == 0) printf("\n");
-                printf("\t%d", i);
-                cpt++;
-            }
-        }
-        printf("\nSoit %d fournissseur(s) ouvert(s).\n", cpt);
-    }
+    if (dflag) display_affect(r->open, data->facility_count);
 
     printf("COUT : %d\n", r->value);
 
