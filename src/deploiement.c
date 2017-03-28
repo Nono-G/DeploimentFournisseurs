@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     if (flag2) deploy(data, glouton2, "GLOUNTON 2", dflag);
     if (lflag) deploy(data, lp, "PROGRAMMATION LINEAIRE", dflag);
     if (aflag) deploy(data, aa , "ARRONDI ALEATOIRE", dflag);
-    if (optind == 1) deploy(data, glouton2, "GLOUNTON 2", dflag);
+    if (! flag1 && ! flag2 && ! lflag && ! aflag) deploy(data, glouton2, "GLOUNTON 2", dflag);
     free_data(data);
     return 0;
 }
