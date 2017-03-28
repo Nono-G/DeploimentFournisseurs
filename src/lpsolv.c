@@ -27,7 +27,7 @@ double* lpsolv(Data* data, int relax){
     int i = 1;
     while(i <= data->facility_count){//LES FOURNISSEURS i
         sprintf(nom, "x%d", i);
-        /*TRACE*/printf("Var %d : %s (%d)\n", i, nom, data->opening_cost[i-1]);
+        //*TRACE*/printf("Var %d : %s (%d)\n", i, nom, data->opening_cost[i-1]);
         glp_set_col_name(lp,i,nom);
         if(! relax){
             glp_set_col_kind(lp,i,GLP_IV);//Var Entière
@@ -43,7 +43,7 @@ double* lpsolv(Data* data, int relax){
         while(j<=data->client_count){//LES CLIENTS j
             int var = iVar(i,j,data);
             sprintf(nom, "y%d-%d", i,j);
-            /*TRACE*/printf("Var %d : %s (%d)\n", var, nom, data->connection[i-1][j-1]);
+            //*TRACE*/printf("Var %d : %s (%d)\n", var, nom, data->connection[i-1][j-1]);
             glp_set_col_name(lp, var, nom);
             glp_set_col_bnds(lp, var, GLP_LO, 0.0, 0.0);
             glp_set_obj_coef(lp, var, (double)data->connection[i - 1][j - 1]);
@@ -100,7 +100,7 @@ double* lpsolv(Data* data, int relax){
         j++;
     }
     glp_load_matrix(lp,iMat-1, ia,ja,ar);
-    /*TRACE*/glp_write_lp(lp,NULL,"LP_PROB_DUMP.txt");
+    //*TRACE*/glp_write_lp(lp,NULL,"LP_PROB_DUMP.txt");
     //V RESOLUTION
     if(relax){//CAS RELAXE
         glp_smcp param;  //Paramètres pour le solveur

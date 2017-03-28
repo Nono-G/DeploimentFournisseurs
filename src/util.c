@@ -10,13 +10,14 @@ Data* load_instance2(char* name) {
         exit(1);
     }
     int t1, f_count, c_count, o_cost, c_cost;
-    char t2;
     char filename[BUZZSIZE];
+    char t2[BUZZSIZE];
     Data* d = (Data*) malloc (sizeof(Data));
-    fscanf(f, "%s %s", &t2, filename);
+    fscanf(f, "%s %s", t2, filename);
     fscanf(f, "%d %d %d", &f_count, &c_count, &t1);
     d->facility_count = f_count;
     d->client_count = c_count;
+    //printf("F : %d\nC : %d\n", d->facility_count, d->client_count);
     d->opening_cost = (int*) malloc (d->facility_count * sizeof(int));
     d->connection = (int**) malloc (d->client_count * sizeof(int*));
     for (int i = 0; i < d->facility_count; ++i) {
@@ -34,7 +35,7 @@ Data* load_instance2(char* name) {
 
 void free_data(Data* data){
     for (int fac = 0; fac < data->facility_count; ++fac){
-        printf("FAC %d\n", fac);
+        //printf("FAC %d\n", fac);
         free(data->connection[fac]);
     }
     free(data->connection);
