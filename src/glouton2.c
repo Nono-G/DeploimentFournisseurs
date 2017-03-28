@@ -41,7 +41,7 @@ beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int*
         }
         j++;
     }
-    tri_rapide(data, fournisseur_i, clientsNC, nClientsNC);
+    tri_lent(data, fournisseur_i, clientsNC, nClientsNC);
     //clientsNC est trié
     beta_return* ret = malloc(sizeof(beta_return));
     ret->y_clients = malloc(data->client_count*sizeof(int));

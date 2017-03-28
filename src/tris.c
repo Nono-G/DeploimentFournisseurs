@@ -1,4 +1,4 @@
-#include "quicksort.h"
+#include "tris.h"
 
 void permute(int i, int j, int* array) {
     int tmp = array[i];
@@ -31,4 +31,22 @@ void tri_rapide_back(Data* data, int fournisseur_i, int g, int d, int* array) {
 void tri_rapide(Data* data, int fournisseur_i, int* array, int arraysize) {
     int debut = 0;
     tri_rapide_back(data, fournisseur_i, debut, arraysize - 1, array);
+}
+
+void tri_lent(Data* data, int fournisseur_i, int* tab, int len){
+    int k = 0;
+    while(k < len){
+        int iMin = k;
+        int i = k+1;
+        while(i < len){
+            if(data->connection[fournisseur_i][tab[i]]<data->connection[fournisseur_i][tab[iMin]]){
+                iMin = i;
+            }
+            i++;
+        }
+        int piv = tab[k];
+        tab[k] = tab[iMin];
+        tab[iMin] = piv;
+        k++;
+    }
 }

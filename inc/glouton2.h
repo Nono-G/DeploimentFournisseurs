@@ -2,7 +2,7 @@
 #define __GLOUTON2_H__
 
 #include "eval.h"
-#include "quicksort.h"
+#include "tris.h"
 #include "priority.h"
 
 #define TYPE_FOURNISEUR 1
