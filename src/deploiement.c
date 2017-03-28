@@ -30,14 +30,14 @@ void display_affect(int* affect, int size) {
     printf("\nSoit %d fournissseur(s) ouvert(s).\n", cpt);
 }
 
-void deploy(Data * data, result* (*funct)(Data*)) {
-    printf("\n"); // cosmétique
+void deploy(Data * data, result* (*funct)(Data*), char* funct_name, int display) {
+    printf("%s\n", funct_name); // cosmétique
     clock_t start = clock();
     result* r = funct(data);
     clock_t end = clock();
-    display_affect(r->open, data->facility_count);
+    if (display) display_affect(r->open, data->facility_count);
     printf("Pour un coût de %d\n", r->value);
-    printf("Calculé en %f secondes.\n", (double)(end - start) / CLOCKS_PER_SEC);
+    printf("Calculé en %f secondes.\n\n", (double)(end - start) / CLOCKS_PER_SEC);
     free_result(r);
 }
 
@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
     int flag2 = 0;
     int lflag = 0;
     int aflag = 0;
+    int dflag = 0;
     int c;
     opterr = 0;
 
@@ -65,6 +66,9 @@ int main(int argc, char *argv[]) {
             case 'a':
                 aflag = 1;
                 break;
+            case 'd':
+                dflag = 1;
+                break;
             case 'h':
                 usage(argv[0]);
             case '?':
@@ -76,11 +80,11 @@ int main(int argc, char *argv[]) {
     }
 
     Data* data = load_instance2(argv[optind]);
-    if (flag1) deploy(data, glouton1);
-    if (flag2) deploy(data, glouton2);
-    if (lflag) deploy(data, lp);
-    if (aflag) deploy(data, aa);
-    if (optind == 1) deploy(data, glouton2);
+    if (flag1) deploy(data, glouton1, "GLOUNTON 1", dflag);
+    if (flag2) deploy(data, glouton2, "GLOUNTON 2", dflag);
+    if (lflag) deploy(data, lp, "PROGRAMMATION LINEAIRE", dflag);
+    if (aflag) deploy(data, aa , "ARRONDI ALEATOIRE", dflag);
+    if (optind == 1) deploy(data, glouton2, "GLOUNTON 2", dflag);
 
     free_data(data);
     return 0;
