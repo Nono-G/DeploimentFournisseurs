@@ -17,9 +17,8 @@ Data* load_instance2(char* name) {
     fscanf(f, "%d %d %d", &f_count, &c_count, &t1);
     d->facility_count = f_count;
     d->client_count = c_count;
-    //printf("F : %d\nC : %d\n", d->facility_count, d->client_count);
     d->opening_cost = (int*) malloc (d->facility_count * sizeof(int));
-    d->connection = (int**) malloc (d->client_count * sizeof(int*));
+    d->connection = (int**) malloc (d->facility_count * sizeof(int*));
     for (int i = 0; i < d->facility_count; ++i) {
         fscanf(f, "%d %d", &t1, &o_cost);
         d->opening_cost[i] = o_cost;
