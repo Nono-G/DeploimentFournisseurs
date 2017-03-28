@@ -37,7 +37,7 @@ void deploy(Data * data, result* (*funct)(Data*)) {
     clock_t end = clock();
     display_affect(r->open, data->facility_count);
     printf("Pour un coût de %d\n", r->value);
-    printf("Calculer en %f secondes.\n", (double)(end - start) / CLOCKS_PER_SEC);
+    printf("Calculé en %f secondes.\n", (double)(end - start) / CLOCKS_PER_SEC);
     free_result(r);
 }
 
