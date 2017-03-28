@@ -23,7 +23,7 @@ void display_affect(int* affect, int size) {
     for (int i = 0; i < size; ++i) {
         if (affect[i]) {
             if (cpt % 5 == 0) printf("\n");
-            printf("\t%d", i);
+            printf("\t%d", i+1);
             cpt++;
         }
     }
@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
     }
 
     Data* data = load_instance2(argv[optind]);
+    printf("F : %d\nC : %d\n",data->facility_count, data->client_count);
     if (flag1) deploy(data, glouton1);
     if (flag2) deploy(data, glouton2);
     if (lflag) deploy(data, lp);

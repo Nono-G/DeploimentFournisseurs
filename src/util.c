@@ -33,8 +33,10 @@ Data* load_instance2(char* name) {
 }
 
 void free_data(Data* data){
-    for (int fac = 0; fac < data->facility_count; ++fac)
+    for (int fac = 0; fac < data->facility_count; ++fac){
+        printf("FAC %d\n", fac);
         free(data->connection[fac]);
+    }
     free(data->connection);
     free(data->opening_cost);
     free(data);

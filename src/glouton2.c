@@ -2,10 +2,10 @@
 
 //Penser a free le return
 //Retourne struct :
-//  value : le ration
+//  value : le ratio
 //  y_clients : le tableau de clients y
 //  y_size : taille explicite de y_clients
-beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int* clients_connectes){//i énuméré à partir de 1 !
+beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int* clients_connectes){
     //Partie 1 :: 2*fi - Sig[j c/c S](c(j,O)-c_i,j)+
     double res = /*2**/data->opening_cost[fournisseur_i];
     int j = 0;
