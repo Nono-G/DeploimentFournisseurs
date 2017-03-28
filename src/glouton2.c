@@ -7,7 +7,7 @@
 //  y_size : taille explicite de y_clients
 beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int* clients_connectes){
     //Partie 1 :: 2*fi - Sig[j c/c S](c(j,O)-c_i,j)+
-    double res = /*2**/data->opening_cost[fournisseur_i];
+    double res = 1 * data->opening_cost[fournisseur_i];
     int j = 0;
     int somme = 0;
     while(j < data->client_count){
@@ -68,7 +68,6 @@ beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int*
 }
 
 result* glouton2 (Data* data) {
-    printf("GLOUTON 2 :\n");
     result* r = (result*) malloc (sizeof(result));
     r->open = (int*) malloc (data->facility_count * sizeof(int));
     for (int i = 0; i < data->facility_count; ++i)
