@@ -41,17 +41,7 @@ beta_return* beta (Data* data, int fournisseur_i, int* fournisseur_ouverts, int*
         }
         j++;
     }
-    printf("COUCOU\n");
-    for (int i = 0; i < nClientsNC; ++i){
-        printf("%d : %d\n",clientsNC[i], data->connection[fournisseur_i][clientsNC[i]]);
-    }
-    printf("AUREVOIR\n");
     tri_lent(data, fournisseur_i, clientsNC, nClientsNC);
-    printf("COUCOU TRI\n");
-    for (int i = 0; i < nClientsNC; ++i){
-        printf("%d : %d\n",clientsNC[i], data->connection[fournisseur_i][clientsNC[i]]);
-    }
-    printf("AUREVOIR TRI\n");
     //clientsNC est trié
     beta_return* ret = malloc(sizeof(beta_return));
     ret->y_clients = malloc(data->client_count*sizeof(int));
